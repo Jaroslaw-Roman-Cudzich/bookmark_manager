@@ -1,13 +1,22 @@
 # As an internet user
 # In order to have quick access to websites I use frequently
 # I would like to access a list of website bookmarks
-feature 'Shows bookmarks' do
-    scenario 'shows the list of bookmarks on the webpage' do
-      visit('/bookmarks')
+require 'pg'
 
-      expect(page).to have_content "http://www.makersacademy.com/"
-      expect(page).to have_content "http://www.destroyallsoftware.com"
-      expect(page).to have_content "http://www.google.com/"
+feature 'Viewing bookmarks' do
+  scenario 'A user can see bookmarks' do
+    connection = PG.connect(dbname: 'bookmark_manager_test')
+
+    # Add the test data
+    connection.exec("INSERT INTO bookmarks VALUES(1, 'http://www.makersacademy.com');")
+    connection.exec("INSERT INTO bookmarks VALUES(2, 'http://www.destroyallsoftware.com');")
+    connection.exec("INSERT INTO bookmarks VALUES(3, 'http://www.google.com');")
+
+    visit('/bookmarks')
+
+    expect(page).to have_content "http://www.makersacademy.com"
+    expect(page).to have_content "http://www.destroyallsoftware.com"
+    expect(page).to have_content "http://www.google.com"
   end
 end
 
